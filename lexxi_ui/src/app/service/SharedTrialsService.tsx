@@ -12,12 +12,12 @@ interface PaginatedResponse {
   count: number;
 }
 
-export const searchTrials = async (
+export const searchTrials = async <T extends Trial>(
   searchQuery: string,
   courthouseId: number | null,
   page: number = 1,
   pageSize: number = 10
-): Promise<PaginatedResponse> => {
+): Promise<{ data: T[], count: number }> => {
   const supabase = createSupabaseClientSide();
   
   let query = supabase
@@ -43,5 +43,5 @@ export const searchTrials = async (
     throw error;
   }
 
-  return { data: data || [], count: count || 0 };
+  return { data: (data || []) as T[], count: count || 0 };
 };

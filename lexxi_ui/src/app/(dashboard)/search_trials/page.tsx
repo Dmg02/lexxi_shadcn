@@ -25,12 +25,12 @@ interface Trial {
   case_number: string;
   courthouse_id: number;
   is_active: boolean;
-  state: string;
+  state: string; // Add this if it's actually returned by the API
 }
 
 const SearchTrialsPage = () => {
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedState, setSelectedState] = useState<string | null>(null)
+  const [selectedState, setSelectedState] = useState<string | undefined>(undefined)
   const [selectedCourthouse, setSelectedCourthouse] = useState<string | undefined>(undefined)
   const [states, setStates] = useState<State[]>([]);
   const [courthouses, setCourthouses] = useState<Courthouse[]>([]);
@@ -57,7 +57,7 @@ const SearchTrialsPage = () => {
     };
 
     fetchStates();
-  }, []);
+  }, [toast]);
 
   useEffect(() => {
     const fetchCourthouses = async () => {
@@ -75,8 +75,8 @@ const SearchTrialsPage = () => {
     };
 
     fetchCourthouses();
-    setSelectedCourthouse(null); // Reset selected courthouse when state changes
-  }, [selectedState]);
+    setSelectedCourthouse(undefined); // Reset selected courthouse when state changes
+  }, [selectedState, toast]);
 
   const handleSearch = async (page: number = 1) => {
     if (!searchQuery.trim()) {
@@ -91,8 +91,7 @@ const SearchTrialsPage = () => {
     setIsLoading(true)
     try {
       const courthouseId = selectedCourthouse ? parseInt(selectedCourthouse) : null;
-      const { data, count } = await searchTrials(searchQuery, courthouseId, page, pageSize);
-      
+      const { data, count } = await searchTrials<Trial>(searchQuery, courthouseId, page, pageSize);      
       setTrials(data);
       setTotalCount(count);
       setCurrentPage(page);

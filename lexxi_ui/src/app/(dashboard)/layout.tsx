@@ -11,9 +11,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, loading } = useAuth()
+  const { user, isAuthChecked } = useAuth()
 
-  if (loading) {
+  if (!isAuthChecked) {
     return <div>Loading...</div>
   }
 
