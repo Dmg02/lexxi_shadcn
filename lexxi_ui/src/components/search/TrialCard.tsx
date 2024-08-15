@@ -30,7 +30,7 @@ const TrialCard: React.FC<TrialCardProps> = ({
 
   return (
     <>
-      <Card className="w-full h-full">
+      <Card className="w-full h-full shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
         <CardHeader>
           <CardTitle className="text-lg">{caseNumber}</CardTitle>
         </CardHeader>
@@ -43,7 +43,7 @@ const TrialCard: React.FC<TrialCardProps> = ({
               variant={isActive ? "default" : "destructive"}
               className={cn(
                 "ml-2",
-                isActive && "bg-green-500 hover:bg-green-600"
+                isActive && "bg-[#6dda0c] hover:bg-[#6dda0c]"
               )}
             >
               {isActive ? "Active" : "Finished"}

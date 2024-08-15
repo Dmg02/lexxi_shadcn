@@ -114,9 +114,9 @@ const SearchTrialsPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">Search Trials</h1>
+      <h1 className="text-2xl font-bold mb-8 text-center">Search Trials</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Select value={selectedState} onValueChange={setSelectedState}>
           <SelectTrigger>
             <SelectValue placeholder="Select a state" />
@@ -144,22 +144,21 @@ const SearchTrialsPage = () => {
         </Select>
       </div>
       
-      <Input
-        type="text"
-        placeholder="Enter your search query"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="mb-4"
-      />
-      
-      <div className="flex justify-center">
+      <div className="flex flex-col md:flex-row items-center gap-4 mb-8">
+        <Input
+          type="text"
+          placeholder="Enter your search query"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full md:w-2/3 lg:w-1/2"
+        />
+        
         <Button onClick={() => handleSearch(1)} disabled={isLoading} className="w-full md:w-auto">
           {isLoading ? "Searching..." : "Search"}
         </Button>
       </div>
-      
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {trials.map((trial) => (
           <TrialCard
             key={trial.id}
