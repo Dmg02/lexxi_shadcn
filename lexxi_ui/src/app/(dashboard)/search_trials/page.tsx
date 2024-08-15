@@ -91,7 +91,8 @@ const SearchTrialsPage = () => {
     setIsLoading(true)
     try {
       const courthouseId = selectedCourthouse ? parseInt(selectedCourthouse) : null;
-      const { data, count } = await searchTrials<Trial>(searchQuery, courthouseId, page, pageSize);      
+      const { data, count } = await searchTrials<Trial>(searchQuery, courthouseId, page, pageSize);
+      
       setTrials(data);
       setTotalCount(count);
       setCurrentPage(page);

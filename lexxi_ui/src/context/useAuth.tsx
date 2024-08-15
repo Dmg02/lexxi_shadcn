@@ -3,18 +3,20 @@
 import { createSupabaseClientSide } from '@/lib/supabase/supabase-client-side';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@supabase/supabase-js';
+import { User } from '@/types/user';
 
 const AuthContext = createContext<{
     user: User | null;
     login: (values: TValue) => Promise<void>;
     logout: () => Promise<void>;
     isAuthChecked: boolean;
+    updateUserAvatar: (avatarUrl: string) => Promise<void>;
 }>({
     user: null,
     login: async () => {},
     logout: async () => {},
-    isAuthChecked: false
+    isAuthChecked: false,
+    updateUserAvatar: async () => {}
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -46,6 +48,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push('/login');
     };
 
+    const updateUserAvatar = async (avatarUrl: string) => {
+        if (user) {
+            const { data, error } = await createSupabaseClientSide()
+                .from('profiles')
+                .update({ avatar_url: avatarUrl })
+                .eq('id', user.id)
+
+            if (!error && data) {
+                setUser({ ...user, avatar_url: avatarUrl })
+            }
+        }
+    }
+
     useEffect(() => {
         const checkUser = async () => {
             const { data, error } = await createSupabaseClientSide().auth.getUser();
@@ -63,6 +78,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, [router])
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthChecked }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ user, login, logout, isAuthChecked, updateUserAvatar }}>{children}</AuthContext.Provider>
     );
 };

@@ -40,7 +40,7 @@ const TrialCard: React.FC<TrialCardProps> = ({
           <p>
             <strong>Status:</strong> 
             <Badge 
-              variant={isActive ? "success" : "destructive"} 
+              variant={isActive ? "default" : "destructive"}
               className={cn(
                 "ml-2",
                 isActive && "bg-green-500 hover:bg-green-600"
