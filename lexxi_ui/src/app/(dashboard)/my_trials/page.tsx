@@ -1,20 +1,40 @@
 'use client'
 
-import { TrialTable } from "@/components/search/trialTable"
-import { Trial } from "@/types/createTrial"
+import { useState } from 'react'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { PlusCircle } from 'lucide-react'
+import { columns } from '@/components/search/columns'
+import { Trial } from '@/types/createTrial'
+import { AddTrialDrawer } from '@/components/search/add-trial-drawer'
 
 export default function MyTrialsPage() {
-  // TODO: Replace this with actual data fetching logic
-  const trials: Trial[] = []
+  const [trials, setTrials] = useState<Trial[]>([])
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  const addTrial = (newTrial: Trial) => {
+    setTrials([...trials, newTrial])
+    setIsDrawerOpen(false)
+  }
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-4">My Trials</h1>
-      {trials.length > 0 ? (
-        <TrialTable data={trials} />
-      ) : (
-        <p>No trials available. Add a new trial to get started.</p>
-      )}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Add New Trial</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={() => setIsDrawerOpen(true)}>
+            <PlusCircle className="mr-2 h-4 w-4" /> Add Trial
+          </Button>
+        </CardContent>
+      </Card>
+
+      <AddTrialDrawer
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onAddTrial={addTrial}
+      />
     </div>
   )
 }
