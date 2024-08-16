@@ -19,21 +19,49 @@ export interface OrgTrial {
   team_id: string;
   trial_type_stage?: number;
   created_by?: string;
+  courthouse_id?: string;
+  courthouse?: {
+    id: string;
+    state_id: string;
+    abbreviation: string;
+  };
+}
+
+interface TrialFilters {
+  state_id?: string;
+  courthouse_id?: string;
 }
 
 export const trialService = {
-  getTrials: async (organizationId?: string): Promise<OrgTrial[]> => {
+  getTrials: async (organizationId?: string, filters?: TrialFilters): Promise<OrgTrial[]> => {
     if (!organizationId) {
       console.error('No organization ID provided');
       return [];
     }
-    console.log(`getTrials called for organization: ${organizationId}`);
+    console.log(`getTrials called for organization: ${organizationId} with filters:`, filters);
     const supabase = createSupabaseClientSide();
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('org_trials')
-      .select('*')
+      .select(`
+        *,
+        courthouse:courthouse_id (
+          id,
+          state_id,
+          abbreviation
+        )
+      `)
       .eq('organization_id', organizationId);
+
+    if (filters?.courthouse_id) {
+      query = query.eq('courthouse_id', filters.courthouse_id);
+    }
+
+    if (filters?.state_id) {
+      query = query.eq('courthouse.state_id', filters.state_id);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching trials:', error);
@@ -95,3 +123,4 @@ export const trialService = {
     return data as OrgTrial;
   },
 };
+
