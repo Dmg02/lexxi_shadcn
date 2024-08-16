@@ -11,7 +11,7 @@ interface TrialDetailsDrawerProps {
   onClose: () => void;
   courthouse: string;
   caseNumber: string;
-  trialId: number;
+  trialId: string;
 }
 
 const PublicationCard: React.FC<Publication> = ({ agreement_date, publication_date, summary }) => (

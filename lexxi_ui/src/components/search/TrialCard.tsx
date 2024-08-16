@@ -12,7 +12,7 @@ interface TrialCardProps {
   caseNumber: string;
   isActive: boolean;
   state: string;
-  trialId: number;
+  trialId: string;
 }
 
 const TrialCard: React.FC<TrialCardProps> = ({ 

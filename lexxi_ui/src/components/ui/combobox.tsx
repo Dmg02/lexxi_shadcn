@@ -33,6 +33,7 @@ interface ComboboxProps {
   placeholder?: string
   emptyText?: string
   className?: string
+  displayValue?: (value: string) => string
 }
 
 export function Combobox({
@@ -43,15 +44,28 @@ export function Combobox({
   placeholder = "Select option...",
   emptyText = "No option found.",
   className,
-}: ComboboxProps) {
+  displayValue,
+  optionKey = 'id',
+  optionLabel = 'name',
+}: ComboboxProps & { optionKey?: string, optionLabel?: string }) {
   const [open, setOpen] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState("")
 
   const filteredOptions = React.useMemo(() => {
-    return options.filter((option) =>
-      option.label.toLowerCase().includes(searchQuery.toLowerCase())
+    return options.filter((option: any) =>
+      option[optionLabel]?.toLowerCase()?.includes(searchQuery.toLowerCase())
     )
-  }, [options, searchQuery])
+  }, [options, searchQuery, optionLabel])
+
+  const handleSelect = (selectedValue: string) => {
+    const selectedOption = options.find((option: any) => option[optionKey] === selectedValue)
+    if (selectedOption) {
+      onChange(selectedOption[optionKey])
+    } else if (onAddNew) {
+      onAddNew(searchQuery)
+    }
+    setOpen(false)
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -60,54 +74,50 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-[200px] justify-between", className)}
+          className={cn("w-full justify-between", className)}
         >
-          {value
-            ? options.find((option) => option.value === value)?.label
+          {value 
+            ? options.find((option: any) => option[optionKey] === value)?.[optionLabel] || value
             : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput 
             placeholder={`Search ${placeholder.toLowerCase()}...`} 
-            onValueChange={setSearchQuery}
+            onValueChange={(value) => {
+              setSearchQuery(value)
+              onChange(value)
+            }}
           />
           <CommandList>
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
-              {filteredOptions.map((option) => (
+              {filteredOptions.map((option: any) => (
                 <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={(currentValue) => {
-                    onChange(currentValue === value ? "" : currentValue)
-                    setOpen(false)
-                  }}
+                  key={option[optionKey]}
+                  value={option[optionKey]}
+                  onSelect={handleSelect}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
+                      value === option[optionKey] ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {option.label}
+                  {option[optionLabel]}
                 </CommandItem>
               ))}
             </CommandGroup>
-            {onAddNew && (
+            {onAddNew && searchQuery && !filteredOptions.length && (
               <>
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => {
-                      onAddNew(searchQuery)
-                      setOpen(false)
-                    }}
+                    onSelect={() => handleSelect(searchQuery)}
                   >
                     <PlusCircle className="mr-2 h-4 w-4" />
-                    {/* eslint-disable-next-line react/no-unescaped-entities */}
                     Add "{searchQuery}"
                   </CommandItem>
                 </CommandGroup>

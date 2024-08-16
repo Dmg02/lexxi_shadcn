@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
 import { getStates } from "@/app/service/StatesService";
-import { getCourthouses } from "@/app/service/CourtHouseService";
+import { getCourthouses } from "@/app/service/courtHouseService";
 import { searchTrials } from "@/app/service/SharedTrialsService";
 import TrialCard from '@/components/search/TrialCard';
 
@@ -166,7 +166,7 @@ const SearchTrialsPage = () => {
             caseNumber={trial.case_number}
             isActive={trial.is_active}
             state={trial.state}
-            trialId={trial.id}
+            trialId={trial.id.toString()}
           />
         ))}
       </div>
